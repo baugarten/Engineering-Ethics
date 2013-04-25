@@ -1,0 +1,10 @@
+.container
+  .row
+    .span4.offset4
+      form.submit.form-horizontal(method="POST", ng-submit="submit()")
+        .control-group
+            input(type="text", name="url", ng-model="url", placeholder="Url")
+        .control-group
+            textarea(placeholder="Description", name="description", ng-model="description")
+        .control-group
+            input.btn.btn-large.btn-primary(type="submit")
