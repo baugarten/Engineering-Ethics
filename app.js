@@ -32,10 +32,24 @@ app.configure('production', function(){
   app.use(express.errorHandler());
 });
 
+function todayDate() {
+  var ret = new Date();
+  res.setHours(0);
+  res.setMinutes(0);
+  res.setMilliseconds(0);
+  res.setSeconds(0);
+  return ret;
+}
 
+function before(date1, date2) {
+  return date1.getFullYear() < date2.getFullYear() ||
+    date1.getMonth() < date2.getMonth() ||
+    date1.getDate() < date2.getDate();
+}
 
 var Post = restful.model('posts', restful.mongoose.Schema({
   url: { type: 'string', required: true },
+  title: { type: 'string', required: true },
   description: { type: 'string', required: true },
   published: { type: 'boolean', 'default': false },
   pub_date: { type: 'Date' },
@@ -47,7 +61,7 @@ var Post = restful.model('posts', restful.mongoose.Schema({
       if (err) {
         res.json(err);
       } else {
-        res.json(post);
+        res.json(post || {});
       }
     });
   })
@@ -59,6 +73,16 @@ var Post = restful.model('posts', restful.mongoose.Schema({
         res.json(posts);
       }
     });
+  })
+  .route('vote.post', {
+    detail: true,
+    handler: function(req, res, next) {
+      Post.findByIdAndUpdate(req.params.id, {
+        $inc: { votes: (req.body.up ? 1 : -1) }
+      }, function(err, post) {
+        res.json(err || post);
+      });   
+    }
   });
 
 Post.register(app, '/api/posts');

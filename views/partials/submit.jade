@@ -3,8 +3,10 @@
     .span4.offset4
       form.submit.form-horizontal(method="POST", ng-submit="submit()")
         .control-group
-            input(type="text", name="url", ng-model="url", placeholder="Url")
+            input(type="text", name="url", ng-model="submit.url", placeholder="Url")
         .control-group
-            textarea(placeholder="Description", name="description", ng-model="description")
+            input(type="text", name="title", ng-model="submit.url", placeholder="Title")
+        .control-group
+            textarea(name="submit.description", ng-model="description", placeholder="Description")
         .control-group
             input.btn.btn-large.btn-primary(type="submit")

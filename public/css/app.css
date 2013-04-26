@@ -36,3 +36,40 @@
 .green {
   color: #1ABC9C;
 }
+
+.rank, .voting, .entry {
+  float: left;
+}
+
+.rank {
+  margin-top: 15px;
+  font-size: medium;
+  width: 1.80ex;
+  padding-left: 10px;
+}
+
+.voting {
+  margin-left: 7px;
+  font-size: small;
+}
+
+.voting .arrow {
+  height: 14px;
+  width: 15px;
+  margin: 2px 0px 0px 0px;
+  margin-left: auto;
+  margin-right: auto;
+  outline: none;
+  display: block;
+  cursor: pointer;
+}
+
+.voting .arrow.down {
+  margin-top: -4px;
+}
+
+.voting .votes {
+  text-align: center;
+  font-size: small;
+  height: 16px;
+}

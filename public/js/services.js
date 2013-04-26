@@ -11,16 +11,21 @@ angular.module('myApp.services', []).
     $http({method: 'GET', url: '/api/posts/current'})
       .success(function(data, status, headers, config) {
         self.current = data;
-        $rootScope.$broadcast('currentChange', self.current);
+        $rootScope.$broadcast('currentChange', self.currentPost());
       });
     $http({method: 'GET', url: '/api/posts/unpublished'})
       .success(function(data, status, headers, config) {
         self.unpublished = data;
         $rootScope.$broadcast('unpublishedChange', self.unpublished);
+        if (!self.current._id) {
+          $rootScope.$broadcast('currentChange', self.currentPost());
+        }
       });
       
     this.currentPost = function() {
-      return this.current || {};
+      return (this.current && this.current._id && this.current) || 
+             (this.unpublished && this.unpublished.length > 0 && this.unpublished[0]) || 
+             {};
     };
     this.voting = function() {
       return this.unpublished;

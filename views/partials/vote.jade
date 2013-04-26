@@ -1,4 +1,18 @@
-ul
-  li(ng-repeat="article in unpublished")
-    {{ article.url }}
+.container
+  .row
+    .span10
+      ul.unstyled
+        li(ng-repeat="article in unpublished | orderBy:'votes':true")
+          span.rank {{ $index + 1 }}
+          .voting
+            .arrow.up
+              i.icon-sort-up(ng-click="vote(article, true)")
+            .votes
+              {{ article.votes }}
+            .arrow.down
+              i.icon-sort-down(ng-click="vote(article, false)")
+          .entry
+            a(href='{{article.url}}') {{ article.url }}
+            p.description {{article.description}}
+          .clearfix
 
