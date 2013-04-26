@@ -47,6 +47,15 @@ function before(date1, date2) {
     date1.getDate() < date2.getDate();
 }
 
+var Comment = new restful.mongoose.Schema({
+    methodology: 'String',
+    votes: { type: 'number', 'default': 0 },
+    body: 'String',
+    date: { type: 'Date', 'default': Date.now },
+    comments: [ Comment ]
+});
+
+
 var Post = restful.model('posts', restful.mongoose.Schema({
   url: { type: 'string', required: true },
   title: { type: 'string', required: true },
@@ -54,7 +63,8 @@ var Post = restful.model('posts', restful.mongoose.Schema({
   questions: [ { text: 'string' } ],
   published: { type: 'boolean', 'default': false },
   pub_date: { type: 'Date' },
-  votes: { type: 'number', 'default': 0 }
+  votes: { type: 'number', 'default': 0 },
+  comments: [ Comment ]
 }))
   .methods(['get', 'post'])
   .route('current', function(req, res, next) {

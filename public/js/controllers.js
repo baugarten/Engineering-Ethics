@@ -10,6 +10,7 @@ function IndexCtrl($scope, posts) {
   $scope.$on('currentChange', function(ev, newpost) {
     $scope.post = newpost;
   });
+
 }
 
 

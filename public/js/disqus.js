@@ -1,21 +1,9 @@
-h1 
-  a(href="{{post.url}}") {{ post.title}}
-
-p {{ post.description }}
-    
-#disqus_thread
-    script
-        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
         var disqus_shortname = 'etike'; // required: replace example with your forum shortname
 
         /* * * DON'T EDIT BELOW THIS LINE * * */
         (function() {
-            alert('Disqus');
             var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
             dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
             (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-            alert('Appended');
         })();
-    a.dsq-brlink(href="http://disqus.com") comments powered by 
-      span.logo-disqusDisqus
-    
