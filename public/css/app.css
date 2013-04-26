@@ -73,3 +73,11 @@
   font-size: small;
   height: 16px;
 }
+
+.control-group .fui-cross-16 {
+  margin-left: -36px;
+  margin-right: 4px;
+}
+.control-group .fui-plus-16 {
+  margin-left: 4px;
+}

@@ -51,6 +51,7 @@ var Post = restful.model('posts', restful.mongoose.Schema({
   url: { type: 'string', required: true },
   title: { type: 'string', required: true },
   description: { type: 'string', required: true },
+  questions: [ { text: 'string' } ],
   published: { type: 'boolean', 'default': false },
   pub_date: { type: 'Date' },
   votes: { type: 'number', 'default': 0 }

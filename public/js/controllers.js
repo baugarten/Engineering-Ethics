@@ -29,15 +29,18 @@ function VoteCtrl($scope, $http, posts) {
 }
 
 function SubmitCtrl($scope, $location, $http) {
+  $scope.post = {};
+  $scope.post.questions = [{}];
   $scope.submit = function(ev) {
-    $http.post('/api/posts', {
-      url: $scope.url,
-      description: $scope.description
-    })
-    .success(function(data, status, headers, config) {
-      $location.path('/vote');
-    });
-    
+    $http.post('/api/posts', $scope.post)
+      .success(function(data, status, headers, config) {
+        $location.path('/vote');
+      });
   };  
-
+  $scope.addQuestion = function() {
+    $scope.post.questions.push({});
+  };
+  $scope.removeQuestion = function(index) {
+    $scope.post.questions.splice(index, 1);
+  };
 }

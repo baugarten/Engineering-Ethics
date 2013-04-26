@@ -3,10 +3,14 @@
     .span4.offset4
       form.submit.form-horizontal(method="POST", ng-submit="submit()")
         .control-group
-            input(type="text", name="url", ng-model="submit.url", placeholder="Url")
+            input(type="text", name="url", ng-model="post.url", placeholder="Url")
         .control-group
-            input(type="text", name="title", ng-model="submit.url", placeholder="Title")
+            input(type="text", name="title", ng-model="post.title", placeholder="Title")
         .control-group
-            textarea(name="submit.description", ng-model="description", placeholder="Description")
+            textarea(name="description", ng-model="post.description", placeholder="Description")
+        .control-group(ng-repeat="question in post.questions")
+            .tagsinput-add.fui-cross-16(ng-hide="post.questions.length == 1", ng-click="removeQuestion($index)")
+            input(type="text", name="question.ques", ng-model="question.text", placeholder="questions")
+            .tagsinput-add.fui-plus-16(ng-hide="!$last", ng-click="addQuestion()")
         .control-group
             input.btn.btn-large.btn-primary(type="submit")
