@@ -10,6 +10,11 @@
     
   .row
     .span12
+      ul.nav.nav-pills
+        li(ng-repeat="(framework, catId) in frameworks", ng-class="{active: showing == catId}")
+          a(ng-click="toggleFramework(framework)")  {{ framework }}
+          
+    .span12
       #disqus_thread
         a.dsq-brlink(href="http://disqus.com") comments powered by 
           span.logo-disqusDisqus

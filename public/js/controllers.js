@@ -7,12 +7,35 @@ function AppCtrl($scope, $http) {
 
 function IndexCtrl($scope, posts) {
   $scope.post = posts.currentPost();
+  $scope.frameworks = {
+    'All': 2348399,
+    'Utilitarian': 2351696,
+    'Deontological': 2351699,
+    'Feminist': 2351700,
+    'Virtue': 2351697,
+    'Chaos': 2351698
+  };
+  $scope.showing = $scope.frameworks['All'];
   $scope.$on('currentChange', function(ev, newpost) {
     $scope.post = newpost;
   });
 
+  $scope.toggleFramework = function(framework) {
+    $scope.showing = $scope.frameworks[framework];
+    loadDisqus($scope.showing);
+  };
 }
 
+function loadDisqus(category) {
+  var shortname = 'etike',
+      disqus_category_id = category;
+  (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+
+}
 
 function VoteCtrl($scope, $http, posts) {
   $scope.unpublished = posts.voting();
