@@ -5,7 +5,7 @@
 function AppCtrl($scope, $http) {
 }
 
-function IndexCtrl($scope, posts) {
+function IndexCtrl($scope, posts, $http) {
   $scope.post = posts.currentPost();
   $scope.frameworks = {
     'All': 2348399,
@@ -15,15 +15,38 @@ function IndexCtrl($scope, posts) {
     'Virtue': 2351697,
     'Chaos': 2351698
   };
-  $scope.showing = $scope.frameworks['All'];
+  $scope.currentFramework = 'All';
+  $scope.showing = $scope.frameworks[$scope.currentFramework];
   $scope.$on('currentChange', function(ev, newpost) {
     $scope.post = newpost;
   });
 
   $scope.toggleFramework = function(framework) {
-    $scope.showing = $scope.frameworks[framework];
-    loadDisqus($scope.showing);
+    if (framework in $scope.frameworks) {
+      $scope.currentFramework = framework;
+      $scope.showing = $scope.frameworks[framework];
+      loadDisqus($scope.showing);
+    }
   };
+  $scope.showComment = function(meth) {
+    if ($scope.currentFramework === 'All') return true;
+    return meth.methodology && (meth.methodology.toLowerCase() === $scope.currentFramework.toLowerCase());
+  };
+  $scope.addComment = function() {
+    $http.post('/api/posts/' + $scope.post._id + '/comment', $scope.comment)
+      .success(function(data, status, headers, config) {
+        $scope.post.comments = data.comments;
+        $scope.comment = {
+          methodology: $scope.currentFramework
+        };
+      });
+  };
+  $scope.$watch('currentFramework', function(newval) {
+    if (!$scope.comment) {
+      $scope.comment = {};
+    }
+    $scope.comment.methodology = newval;
+  });
 }
 
 function loadDisqus(category) {

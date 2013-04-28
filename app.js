@@ -48,7 +48,7 @@ function before(date1, date2) {
 }
 
 var Comment = new restful.mongoose.Schema({
-    methodology: 'String',
+    methodology: { type: 'String', required: true },
     votes: { type: 'number', 'default': 0 },
     body: 'String',
     date: { type: 'Date', 'default': Date.now },
@@ -93,6 +93,19 @@ var Post = restful.model('posts', restful.mongoose.Schema({
       }, function(err, post) {
         res.json(err || post);
       });   
+    }
+  })
+  .route('comment', {
+    detail: true,
+    handler: function(req, res, next) {
+      console.log(req.body);
+      Post.findByIdAndUpdate(req.params.id, {
+        $push: { comments: req.body}
+      }, function(err, post) {
+        console.log(err);
+        console.log(post);
+        res.json(err || post);
+      });
     }
   });
 

@@ -15,7 +15,14 @@
           a(ng-click="toggleFramework(framework)")  {{ framework }}
           
     .span12
-      #disqus_thread
-        a.dsq-brlink(href="http://disqus.com") comments powered by 
-          span.logo-disqusDisqus
+      .media
+        .media-body(ng-repeat="comment in post.comments | filter:showComment")
+          {{ comment.body }} 
+    .span12
+      form.form-horizontal(ng-submit="addComment()")
+        .control-group
+          textarea(placeholder="Comment", ng-model="comment.body")
+        .control-group
+          input.btn.btn-primary.btn-large(type="submit")
+      
   
