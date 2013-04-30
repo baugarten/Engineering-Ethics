@@ -99,12 +99,28 @@ var Post = restful.model('posts', restful.mongoose.Schema({
     detail: true,
     handler: function(req, res, next) {
       console.log(req.body);
-      Post.findByIdAndUpdate(req.params.id, {
+      var Model = Post,
+          id = req.params.id;
+      if (req.body.parent) {
+        model = Comment;
+        id = req.body.parent._id;
+      }
+      Model.findByIdAndUpdate(id, {
         $push: { comments: req.body}
       }, function(err, post) {
         console.log(err);
         console.log(post);
-        res.json(err || post);
+        if (req.body.parent) {
+          Post.findById(req.params.id, function(err, post) {
+            console.log(err);
+            console.log(post);
+            res.json(err || post);
+          });
+        } else {
+          console.log(err);
+          console.log(post);
+          res.json(err || post);
+        }
       });
     }
   });

@@ -33,20 +33,28 @@ function IndexCtrl($scope, posts, $http) {
     return meth.methodology && (meth.methodology.toLowerCase() === $scope.currentFramework.toLowerCase());
   };
   $scope.addComment = function() {
-    $http.post('/api/posts/' + $scope.post._id + '/comment', $scope.comment)
+    $http.post('/api/posts/' + $scope.post._id + '/comment', $scope.newcomment)
       .success(function(data, status, headers, config) {
         $scope.post.comments = data.comments;
-        $scope.comment = {
+        $scope.newcomment = {
           methodology: $scope.currentFramework
         };
       });
   };
   $scope.$watch('currentFramework', function(newval) {
-    if (!$scope.comment) {
-      $scope.comment = {};
+    if (!$scope.newcomment) {
+      $scope.newcomment = {};
     }
-    $scope.comment.methodology = newval;
+    $scope.newcomment.methodology = newval;
   });
+  $scope.reply = function(comment, show) {
+    if (show) {
+      $scope.replycomment = comment;
+      $scope.newcomment.parent = comment;
+    } else {
+      $scope.replycomment = undefined;
+    }
+  };
 }
 
 function loadDisqus(category) {

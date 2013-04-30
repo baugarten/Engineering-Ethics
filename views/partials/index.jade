@@ -13,16 +13,53 @@
       ul.nav.nav-pills
         li(ng-repeat="(framework, catId) in frameworks", ng-class="{active: showing == catId}")
           a(ng-click="toggleFramework(framework)")  {{ framework }}
-          
+
     .span12
-      .media
-        .media-body(ng-repeat="comment in post.comments | filter:showComment")
-          {{ comment.body }} 
-    .span12
-      form.form-horizontal(ng-submit="addComment()")
+      form.form-horizontal(ng-submit="addComment()", ng-show="!replycomment")
         .control-group
-          textarea(placeholder="Comment", ng-model="comment.body")
+          textarea(placeholder="Comment", ng-model="newcomment.body")
         .control-group
           input.btn.btn-primary.btn-large(type="submit")
       
-  
+          
+    .span12
+      .media
+        .media-body.well(ng-repeat="comment in post.comments | filter:showComment | orderBy:'votes':true")
+          .voting
+            .arrow.up
+              i.icon-sort-up(ng-click="vote(comment, true)")
+          .votes
+            {{ comment.votes }} Points by&nbsp;&nbsp;
+          span.fui-man-24 
+          .body {{ comment.body }} 
+          small.date Posted on {{comment.date | date:'short'}} 
+            a(ng-click="reply(comment, true)", ng-hide="replycomment == comment") reply
+            a(ng-click="reply(comment, false)", ng-hide="replycomment != comment") hide 
+          form.form-horizontal(ng-submit="addComment()", ng-show="replycomment == comment")
+            .control-group
+              textarea(placeholder="Comment", ng-model="newcomment.body")
+            .control-group
+              input.btn.btn-primary.btn-large(type="submit", value="Add Comment") Add Comment
+        .media
+          .media-body.well(ng-repeat="subcomment in comment.comments | filter:showComment | orderBy:'votes':true")
+            .voting
+              .arrow.up
+                i.icon-sort-up(ng-click="vote(subcomment, true)")
+            .votes
+              {{ comment.votes }} Points by&nbsp;&nbsp;
+            span.fui-man-24 
+            .body {{ comment.body }} 
+            small.date Posted on {{comment.date | date:'short'}} 
+              a(ng-click="reply(subcomment, true)", ng-hide="replycomment == subcomment") reply
+              a(ng-click="reply(subcomment, false)", ng-hide="replycomment != subcomment") hide 
+            form.form-horizontal(ng-submit="addComment()", ng-show="replycomment == subcomment")
+              .control-group
+                textarea(placeholder="Comment", ng-model="newcomment.body")
+              .control-group
+                input.btn.btn-primary.btn-large(type="submit", value="Add Comment") Add Comment
+            
+            
+    
+            
+            
+    

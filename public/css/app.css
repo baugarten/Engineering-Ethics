@@ -74,6 +74,13 @@
   height: 16px;
 }
 
+.media-body .votes {
+  float: left;
+}
+.media-body .body{
+  margin-left: 20px;
+}
+
 .control-group .fui-cross-16 {
   margin-left: -36px;
   margin-right: 4px;
