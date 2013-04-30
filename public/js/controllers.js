@@ -17,7 +17,14 @@ function IndexCtrl($scope, posts, $http) {
   };
   $scope.currentFramework = 'All';
   $scope.showing = $scope.frameworks[$scope.currentFramework];
+  $scope.newcomment = {
+    methodology: $scope.currentFramework,
+    parent: $scope.post  
+  };
   $scope.$on('currentChange', function(ev, newpost) {
+    if (!$scope.post || ($scope.newcomment.parent._id === $scope.post._id)) {
+      $scope.newcomment.parent = newpost;
+    }
     $scope.post = newpost;
   });
 
@@ -37,14 +44,12 @@ function IndexCtrl($scope, posts, $http) {
       .success(function(data, status, headers, config) {
         $scope.post.comments = data.comments;
         $scope.newcomment = {
-          methodology: $scope.currentFramework
+          methodology: $scope.currentFramework,
+          parent: $scope.post
         };
       });
   };
   $scope.$watch('currentFramework', function(newval) {
-    if (!$scope.newcomment) {
-      $scope.newcomment = {};
-    }
     $scope.newcomment.methodology = newval;
   });
   $scope.reply = function(comment, show) {
@@ -53,6 +58,17 @@ function IndexCtrl($scope, posts, $http) {
       $scope.newcomment.parent = comment;
     } else {
       $scope.replycomment = undefined;
+      $scope.newcomment.parent = $scope.post;
+    }
+  };
+  $scope.expand = function(comment, expand) {
+    comment.expanded = expand;
+    if (expand && comment.comments.length > 0 && 'string' === typeof comment.comments[0]) {
+      $http.get('/api/comments/' + comment._id)
+        .success(function(data, status, headers, config) {
+          $scope.post.comments[$scope.post.comments.indexOf(comment)] = data; 
+          data.expanded = true;
+        });
     }
   };
 }

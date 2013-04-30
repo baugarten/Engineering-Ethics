@@ -17,8 +17,10 @@ angular.module('myApp.services', []).
       .success(function(data, status, headers, config) {
         self.unpublished = data;
         $rootScope.$broadcast('unpublishedChange', self.unpublished);
-        if (!self.current._id) {
-          $rootScope.$broadcast('currentChange', self.currentPost());
+        if (!self.current || !self.current._id) {
+          var post = self.currentPost();
+
+          $rootScope.$broadcast('currentChange', post);
         }
       });
       

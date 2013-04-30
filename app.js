@@ -6,7 +6,8 @@
 var express = require('express'),
   routes = require('./routes'),
   restful = require('node-restful'),
-  api = require('./routes/api');
+  api = require('./routes/api'),
+  ObjectId = restful.mongoose.Schema.ObjectId;
 
 var app = module.exports = express(),
     mongooseuri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 
@@ -47,13 +48,19 @@ function before(date1, date2) {
     date1.getDate() < date2.getDate();
 }
 
-var Comment = new restful.mongoose.Schema({
+var Comment = restful.model('comments', restful.mongoose.Schema({
     methodology: { type: 'String', required: true },
     votes: { type: 'number', 'default': 0 },
     body: 'String',
     date: { type: 'Date', 'default': Date.now },
-    comments: [ Comment ]
-});
+    comments: [ { type: ObjectId, ref: 'comments' } ]
+}))
+  .methods(['get'])
+  .route('get', function(req, res, next) {
+    Comment.findById(req.params.id).populate('comments').exec(function(err, comment) {
+      res.json(comment || err);
+    }); 
+  });
 
 
 var Post = restful.model('posts', restful.mongoose.Schema({
@@ -64,11 +71,11 @@ var Post = restful.model('posts', restful.mongoose.Schema({
   published: { type: 'boolean', 'default': false },
   pub_date: { type: 'Date' },
   votes: { type: 'number', 'default': 0 },
-  comments: [ Comment ]
+  comments: [ { type: ObjectId, ref: 'comments' } ]
 }))
   .methods(['get', 'post'])
   .route('current', function(req, res, next) {
-    this.findOne({published: true}).sort('-pub_date').exec(function(err, post) {
+    Post.find().populate('comments').populate('comments.comments').findOne({published: true}).sort('-pub_date').exec(function(err, post) {
       if (err) {
         res.json(err);
       } else {
@@ -77,7 +84,8 @@ var Post = restful.model('posts', restful.mongoose.Schema({
     });
   })
   .route('unpublished', function(req, res, next) {
-    this.find({published: false}).limit(20).sort('-votes -pub_date').exec(function(err, posts) {
+    Post.find().populate('comments').populate('comments.comments').find({published: false}).limit(20).sort('-votes -pub_date').exec(function(err, posts) {
+      console.log(posts);
       if (err) {
         res.json(err);
       } else {
@@ -88,7 +96,7 @@ var Post = restful.model('posts', restful.mongoose.Schema({
   .route('vote.post', {
     detail: true,
     handler: function(req, res, next) {
-      Post.findByIdAndUpdate(req.params.id, {
+      Post.find().populate('comments').populate('comments.comments').findByIdAndUpdate(req.params.id, {
         $inc: { votes: (req.body.up ? 1 : -1) }
       }, function(err, post) {
         res.json(err || post);
@@ -99,33 +107,39 @@ var Post = restful.model('posts', restful.mongoose.Schema({
     detail: true,
     handler: function(req, res, next) {
       console.log(req.body);
-      var Model = Post,
-          id = req.params.id;
-      if (req.body.parent) {
-        model = Comment;
-        id = req.body.parent._id;
+      var Model = Comment,
+          id = req.body.parent._id;
+      if (req.body.parent.url) {
+        console.log("WE HAVE A POST HERE");
+        Model = Post;
       }
-      Model.findByIdAndUpdate(id, {
-        $push: { comments: req.body}
-      }, function(err, post) {
-        console.log(err);
-        console.log(post);
-        if (req.body.parent) {
-          Post.findById(req.params.id, function(err, post) {
-            console.log(err);
-            console.log(post);
-            res.json(err || post);
-          });
-        } else {
+      var comment = new Comment(req.body);
+      comment.save(function(err, comment) {
+        console.log(id);
+        console.log(comment._id);
+        Model.findByIdAndUpdate(id, {
+          $push: { comments: comment._id}
+        }, function(err, comment) {
           console.log(err);
-          console.log(post);
-          res.json(err || post);
-        }
+          console.log(comment);
+          if (!req.body.parent.url) {
+            console.log("Getting the post");
+            Post.findById(req.params.id).populate('comments').populate('comments.comments').exec(function(err, post) {
+              console.log(err);
+              console.log(post);
+              res.json(err || post);
+            });
+          } else {
+            console.log("Already have the post");
+            res.json(err || comment); // actually a post
+          }
+        });
       });
     }
   });
 
-Post.register(app, '/api/posts');
+  Post.register(app, '/api/posts');
+  Comment.register(app, '/api/comments');
 
 // Routes
 
