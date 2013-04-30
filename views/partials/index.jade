@@ -58,13 +58,6 @@
               span.fui-man-24 
               .body {{ subcomment.body }} 
               small.date Posted on {{subcomment.date | date:'short'}} 
-                a(ng-click="reply(subcomment, true)", ng-hide="replycomment == subcomment") reply
-                a(ng-click="reply(subcomment, false)", ng-hide="replycomment != subcomment") hide 
-              form.form-horizontal(ng-submit="addComment()", ng-show="replycomment == subcomment")
-                .control-group
-                  textarea(placeholder="Comment", ng-model="newcomment.body")
-                .control-group
-                  input.btn.btn-primary.btn-large(type="submit", value="Add Comment") Add Comment
               
               
       
