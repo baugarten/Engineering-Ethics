@@ -19,10 +19,10 @@ function IndexCtrl($scope, posts, $http) {
   $scope.showing = $scope.frameworks[$scope.currentFramework];
   $scope.newcomment = {
     methodology: $scope.currentFramework,
-    parent: $scope.post  
+    parent: $scope.post
   };
   $scope.$on('currentChange', function(ev, newpost) {
-    if (!$scope.post || ($scope.newcomment.parent._id === $scope.post._id)) {
+  if (!$scope.post || ($scope.newcomment.parent._id === $scope.post._id)) {
       $scope.newcomment.parent = newpost;
     }
     $scope.post = newpost;
@@ -32,7 +32,6 @@ function IndexCtrl($scope, posts, $http) {
     if (framework in $scope.frameworks) {
       $scope.currentFramework = framework;
       $scope.showing = $scope.frameworks[framework];
-      loadDisqus($scope.showing);
     }
   };
   $scope.showComment = function(meth) {
@@ -66,22 +65,11 @@ function IndexCtrl($scope, posts, $http) {
     if (expand && comment.comments.length > 0 && 'string' === typeof comment.comments[0]) {
       $http.get('/api/comments/' + comment._id)
         .success(function(data, status, headers, config) {
-          $scope.post.comments[$scope.post.comments.indexOf(comment)] = data; 
+          $scope.post.comments[$scope.post.comments.indexOf(comment)] = data;
           data.expanded = true;
         });
     }
   };
-}
-
-function loadDisqus(category) {
-  var shortname = 'etike',
-      disqus_category_id = category;
-  (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-
 }
 
 function VoteCtrl($scope, $http, posts) {
@@ -107,11 +95,28 @@ function SubmitCtrl($scope, $location, $http) {
       .success(function(data, status, headers, config) {
         $location.path('/vote');
       });
-  };  
+  };
   $scope.addQuestion = function() {
     $scope.post.questions.push({});
   };
   $scope.removeQuestion = function(index) {
     $scope.post.questions.splice(index, 1);
+  };
+}
+
+function KnowledgeCtrl($scope, $http) {
+  $scope.knowledgebase = {}; //knowledgebase.get();
+  $scope.toggleCategory = function(show) {
+    $scope.shownewcategory = show;
+    if (!$scope.newcategory) {
+      $scope.newcategory = {};
+    }
+  };
+  $scope.submit = function() {
+    alert("Hello");
+    $http.post('/api/categories')
+      .success(function(data, status, headers, config) {
+        $scope.knowledgebase[data.name] = data.terms;
+      });
   };
 }

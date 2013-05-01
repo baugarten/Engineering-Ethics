@@ -7,6 +7,7 @@ angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives'])
     $routeProvider.when('/', {templateUrl: 'partials/index', controller: IndexCtrl});
     $routeProvider.when('/vote', {templateUrl: 'partials/vote', controller: VoteCtrl});
     $routeProvider.when('/submit', {templateUrl: 'partials/submit', controller: SubmitCtrl});
+    $routeProvider.when('/knowledgebase', {templateUrl: 'partials/knowledge', controller: KnowledgeCtrl});
     $routeProvider.otherwise({redirectTo: '/'});
     $locationProvider.html5Mode(true);
   }]);

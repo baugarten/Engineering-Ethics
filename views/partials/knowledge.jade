@@ -1,0 +1,24 @@
+.container
+  .row
+    .span12
+      h1 Knowledge Base
+
+  .row
+    ul.thumbnails
+      li.span3(ng-repeat="category in knowledgebase")
+      h3 {{ category.name }}
+      ul.unstyled
+        li(ng-repeat="item in category.items")
+          {{ item.name}} -> {{ item.definition }}
+    
+  .row
+    .span12
+      a(ng-click="toggleCategory(true)", ng-hide="shownewcategory", href="javascript:") Add Category
+      a(ng-hide="!shownewcategory", ng-click="toggleCategory(false)", href="javascript:") Nevermind
+      form.form-horizontal(ng-hide="!shownewcategory", ng-submit="submit()")
+        .control-group
+          input(type="text", ng-model="newcategory.name", placeholder="Category Name")
+        .control-group
+          input.btn.btn-primary.btn-large(type="submit")
+          
+
