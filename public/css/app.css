@@ -91,3 +91,6 @@
 .item-name {
   font-weight: bold;
 }
+.body span {
+  color: #1abc9c;
+}
