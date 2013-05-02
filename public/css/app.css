@@ -88,3 +88,6 @@
 .control-group .fui-plus-16 {
   margin-left: 4px;
 }
+.item-name {
+  font-weight: bold;
+}

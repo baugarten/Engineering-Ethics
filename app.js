@@ -62,6 +62,21 @@ var Comment = restful.model('comments', restful.mongoose.Schema({
     }); 
   });
 
+var Category = restful.model('categories', restful.mongoose.Schema({
+  name: { type: 'string', unique: true, required: true },
+  items: [ { 
+    name: 'string',
+    definition: 'string'
+  } ]
+}))
+  .methods(['get', 'post', 'put'])
+  .route('item.post', function(req, res, next) {
+    Category.findOneAndUpdate({ name: req.body.category },
+      { $push: { items: req.body } }, function(err, category) {
+      res.json(err || category);
+    });
+  });
+
 
 var Post = restful.model('posts', restful.mongoose.Schema({
   url: { type: 'string', required: true },
@@ -119,7 +134,7 @@ var Post = restful.model('posts', restful.mongoose.Schema({
         console.log(comment._id);
         Model.findByIdAndUpdate(id, {
           $push: { comments: comment._id}
-        }, function(err, comment) {
+        }).populate('comments').exec(function(err, comment) {
           console.log(err);
           console.log(comment);
           if (!req.body.parent.url) {
@@ -140,6 +155,7 @@ var Post = restful.model('posts', restful.mongoose.Schema({
 
   Post.register(app, '/api/posts');
   Comment.register(app, '/api/comments');
+  Category.register(app, '/api/categories');
 
 // Routes
 

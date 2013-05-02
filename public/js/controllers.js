@@ -5,8 +5,13 @@
 function AppCtrl($scope, $http) {
 }
 
-function IndexCtrl($scope, posts, $http) {
+function IndexCtrl($scope, posts, $http, knowledge) {
   $scope.post = posts.currentPost();
+  $scope.specialwords = [];
+  var knowledgebase = knowledge.get();
+  Object.keys(knowledgebase || {}).forEach(function(category) {
+    $scope.specialwords = $scope.specialwords.concat(knowledgebase[category]);
+  });
   $scope.frameworks = {
     'All': 2348399,
     'Utilitarian': 2351696,
@@ -26,6 +31,14 @@ function IndexCtrl($scope, posts, $http) {
       $scope.newcomment.parent = newpost;
     }
     $scope.post = newpost;
+    $scope.updateComments();
+  });
+  $scope.$on('knowledgeChange', function(ev, knowledge) {
+    $scope.specialwords = [];
+    Object.keys(knowledge).forEach(function(category) {
+      $scope.specialwords = $scope.specialwords.concat(knowledge[category]);
+    });
+    $scope.updateComments();
   });
 
   $scope.toggleFramework = function(framework) {
@@ -70,6 +83,21 @@ function IndexCtrl($scope, posts, $http) {
         });
     }
   };
+  $scope.$watch('post', $scope.updateComments);
+  $scope.updateComments = function() {
+    console.log("Update", $scope.post && $scope.post.comments && $scope.post.comments.length, $scope.specialwords.length);
+    if ($scope.post.comments) {
+      $scope.post.comments.forEach(function(comment) {
+        console.log($scope.specialwords);
+        $scope.specialwords.forEach(function(word) {
+          comment.body = comment.body.replace(new RegExp(word.name, 'ig'), "<span data-toggle='tooltip' title='" + word.definition + "'>" + word.name + "</span>");
+        });
+      });
+    }
+  };
+  $scope.$on('$viewContentLoaded', function() {
+    $('.body span').tooltip(); 
+  });
 }
 
 function VoteCtrl($scope, $http, posts) {
@@ -104,8 +132,8 @@ function SubmitCtrl($scope, $location, $http) {
   };
 }
 
-function KnowledgeCtrl($scope, $http) {
-  $scope.knowledgebase = {}; //knowledgebase.get();
+function KnowledgeCtrl($scope, $http, knowledge) {
+  $scope.knowledgebase = knowledgebase.get();
   $scope.toggleCategory = function(show) {
     $scope.shownewcategory = show;
     if (!$scope.newcategory) {
@@ -113,10 +141,29 @@ function KnowledgeCtrl($scope, $http) {
     }
   };
   $scope.submit = function() {
-    alert("Hello");
-    $http.post('/api/categories')
+    $http.post('/api/categories', $scope.newcategory)
       .success(function(data, status, headers, config) {
         $scope.knowledgebase[data.name] = data.terms;
+      });
+  };
+  $scope.$on('knowledgeChange', function(ev, knowledge) {
+    $scope.knowledgebase = knowledge;
+  });
+  $scope.addItem = function(category) {
+    $scope.shownewitem = category;
+    $scope.newitem = {
+      category: category
+    };
+  };
+  $scope.hideItem = function(category) {
+    $scope.shownewitem = false;
+  };
+  $scope.submitNewItem = function() {
+    var category = $scope.newitem.category;
+    $http.post('/api/categories/item', $scope.newitem)
+      .success(function(data, status, headers, config) {
+        $scope.knowledgebase[category] = data.items;
+        $scope.newitem = false;
       });
   };
 }

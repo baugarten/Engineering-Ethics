@@ -32,4 +32,18 @@ angular.module('myApp.services', []).
     this.voting = function() {
       return this.unpublished;
     };
+  })
+  .service('knowledge', function($rootScope, $http) {
+    var self = this;
+    $http({method: 'GET', url: '/api/categories' })
+      .success(function(data, status, headers, config) {
+        self.categories = {};
+        data.forEach(function(category) {
+          self.categories[category.name] = category.items;
+        });
+        $rootScope.$broadcast('knowledgeChange', self.categories);
+      });
+    this.get = function() {
+      return self.categories;
+    };
   });

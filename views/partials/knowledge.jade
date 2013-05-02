@@ -4,12 +4,25 @@
       h1 Knowledge Base
 
   .row
-    ul.thumbnails
-      li.span3(ng-repeat="category in knowledgebase")
-      h3 {{ category.name }}
-      ul.unstyled
-        li(ng-repeat="item in category.items")
-          {{ item.name}} -> {{ item.definition }}
+    .span12
+      ul.thumbnails
+        li.span3.well(ng-repeat="(category, items) in knowledgebase")
+          h3 {{ category}}
+          ul.unstyled
+            li(ng-repeat="item in items")
+              span.item-name {{ item.name}}: 
+              {{ item.definition }}
+          .none(ng-show="category.items.length == 0")
+            No definitions yet... 
+          a(ng-hide="shownewitem == category", ng-click="addItem(category)", href="javascript:") add one?
+          a(ng-hide="!shownewitem || shownewitem != category", ng-click="hideItem()", href="javascript:") nevermind
+          form.form-horizontal(ng-hide="!shownewitem || shownewitem != category", ng-submit="submitNewItem()")
+            .control-group
+              input(type="text", ng-model="newitem.name", placeholder="Item Name")
+            .control-group
+              textarea(ng-model="newitem.definition", placeholder="Definition")
+            .control-group
+              input.btn.btn-primary.btn-large(type="submit")
     
   .row
     .span12

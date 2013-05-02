@@ -36,7 +36,7 @@
           .votes
             {{ comment.votes }} Points by anonymous&nbsp;&nbsp;
           span.fui-man-24 
-          .body {{ comment.body }} 
+          .body(ng-bind-html-unsafe="comment.body", ng-tooltip="")
           small.date Posted on {{comment.date | date:'short'}} 
             a(ng-click="reply(comment, true)", ng-hide="replycomment == comment") reply
             a(ng-click="reply(comment, false)", ng-hide="replycomment != comment") hide 
