@@ -111,9 +111,9 @@ var Post = restful.model('posts', restful.mongoose.Schema({
   .route('vote.post', {
     detail: true,
     handler: function(req, res, next) {
-      Post.find().populate('comments').populate('comments.comments').findByIdAndUpdate(req.params.id, {
+      Post.findByIdAndUpdate(req.params.id, {
         $inc: { votes: (req.body.up ? 1 : -1) }
-      }, function(err, post) {
+      }).populate('comments').exec(function(err, post) {
         res.json(err || post);
       });   
     }
