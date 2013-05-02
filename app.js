@@ -90,7 +90,7 @@ var Post = restful.model('posts', restful.mongoose.Schema({
 }))
   .methods(['get', 'post'])
   .route('current', function(req, res, next) {
-    Post.find().populate('comments').populate('comments.comments').findOne({published: true}).sort('-pub_date').exec(function(err, post) {
+    Post.findOne({published: true}).populate('comments').sort('-pub_date').exec(function(err, post) {
       if (err) {
         res.json(err);
       } else {
