@@ -59,6 +59,7 @@ function IndexCtrl($scope, posts, $http, knowledge) {
           methodology: $scope.currentFramework,
           parent: $scope.post
         };
+        $scope.updateComments();
       });
   };
   $scope.$watch('currentFramework', function(newval) {
