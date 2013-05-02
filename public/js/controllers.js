@@ -133,7 +133,7 @@ function SubmitCtrl($scope, $location, $http) {
 }
 
 function KnowledgeCtrl($scope, $http, knowledge) {
-  $scope.knowledgebase = knowledgebase.get();
+  $scope.knowledgebase = knowledge.get();
   $scope.toggleCategory = function(show) {
     $scope.shownewcategory = show;
     if (!$scope.newcategory) {
